@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Azure CI/CD Pipeline</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Background Grid -->
+  <div class="bg-grid"></div>
+  <div class="scanline"></div>
+
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-icon">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+            <path d="M4 8L16 4L28 8V16C28 22 22 27 16 30C10 27 4 22 4 16V8Z" stroke="#0078D4" stroke-width="2" fill="none"/>
+            <path d="M10 16L14 20L22 12" stroke="#0078D4" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </span>
+        <span class="logo-text">Azure<span class="logo-accent">DevOps</span></span>
+      </div>
+      <nav class="top-nav">
+        <a href="#pipeline">Pipeline</a>
+        <a href="#registry">Registry</a>
+        <a href="#deploy">Deploy</a>
+        <a href="#monitor">Monitor</a>
+        <a href="#concepts">Concepts</a>
+      </nav>
+      <div class="header-badge">
+        <span class="badge-dot"></span>
+        <span>Pipeline Active</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-tag">CI/CD AUTOMATION</div>
+    <h1 class="hero-title">
+      Build. Package.<br/>
+      <span class="title-accent">Deploy. Monitor.</span>
+    </h1>
+    <p class="hero-sub">
+      Automated CI/CD pipelines on Azure — from source commit to live deployment<br/>
+      using Azure Pipelines, Container Registry &amp; App Service.
+    </p>
+    <div class="hero-actions">
+      <button class="btn-primary" onclick="runPipelineDemo()">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M3 2l10 6-10 6V2z"/></svg>
+        Run Pipeline Demo
+      </button>
+      <button class="btn-outline" onclick="scrollToSection('concepts')">Learn Concepts</button>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><span class="stat-num" data-target="99.9">0</span><span>% Uptime</span></div>
+      <div class="stat-div"></div>
+      <div class="stat"><span class="stat-num" data-target="12">0</span><span>s Avg Build</span></div>
+      <div class="stat-div"></div>
+      <div class="stat"><span class="stat-num" data-target="340">0</span><span> Deployments</span></div>
+    </div>
+  </section>
+
+  <!-- PIPELINE VISUALIZER -->
+  <section class="section" id="pipeline">
+    <div class="section-header">
+      <div class="section-tag">AZURE PIPELINES</div>
+      <h2>Live Pipeline Visualizer</h2>
+      <p>Watch each stage execute in real-time. Click any stage for details.</p>
+    </div>
+
+    <div class="pipeline-container">
+      <div class="pipeline-track">
+
+        <!-- Stage 1: Source -->
+        <div class="pipe-stage" id="stage-source" data-stage="0" onclick="selectStage(0)">
+          <div class="stage-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+            </svg>
+          </div>
+          <div class="stage-label">Source</div>
+          <div class="stage-sublabel">GitHub Repo</div>
+          <div class="stage-status" id="status-0">IDLE</div>
+          <div class="stage-progress"><div class="progress-fill" id="prog-0"></div></div>
+        </div>
+
+        <div class="pipe-connector" id="conn-0"><div class="conn-line"><div class="conn-flow"></div></div></div>
+
+        <!-- Stage 2: Build -->
+        <div class="pipe-stage" id="stage-build" data-stage="1" onclick="selectStage(1)">
+          <div class="stage-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>
+            </svg>
+          </div>
+          <div class="stage-label">Build</div>
+          <div class="stage-sublabel">Compile & Test</div>
+          <div class="stage-status" id="status-1">IDLE</div>
+          <div class="stage-progress"><div class="progress-fill" id="prog-1"></div></div>
+        </div>
+
+        <div class="pipe-connector" id="conn-1"><div class="conn-line"><div class="conn-flow"></div></div></div>
+
+        <!-- Stage 3: Docker -->
+        <div class="pipe-stage" id="stage-docker" data-stage="2" onclick="selectStage(2)">
+          <div class="stage-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="8" width="4" height="4"/><rect x="7" y="8" width="4" height="4"/><rect x="12" y="8" width="4" height="4"/>
+              <rect x="7" y="3" width="4" height="4"/><path d="M18 8c1.5 0 4 1 4 4s-2 4-2 4H4a4 4 0 010-8h2"/>
+            </svg>
+          </div>
+          <div class="stage-label">Containerize</div>
+          <div class="stage-sublabel">Docker Build</div>
+          <div class="stage-status" id="status-2">IDLE</div>
+          <div class="stage-progress"><div class="progress-fill" id="prog-2"></div></div>
+        </div>
+
+        <div class="pipe-connector" id="conn-2"><div class="conn-line"><div class="conn-flow"></div></div></div>
+
+        <!-- Stage 4: ACR Push -->
+        <div class="pipe-stage" id="stage-acr" data-stage="3" onclick="selectStage(3)">
+          <div class="stage-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/>
+              <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+            </svg>
+          </div>
+          <div class="stage-label">Push to ACR</div>
+          <div class="stage-sublabel">Container Registry</div>
+          <div class="stage-status" id="status-3">IDLE</div>
+          <div class="stage-progress"><div class="progress-fill" id="prog-3"></div></div>
+        </div>
+
+        <div class="pipe-connector" id="conn-3"><div class="conn-line"><div class="conn-flow"></div></div></div>
+
+        <!-- Stage 5: Deploy -->
+        <div class="pipe-stage" id="stage-deploy" data-stage="4" onclick="selectStage(4)">
+          <div class="stage-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+            </svg>
+          </div>
+          <div class="stage-label">Deploy</div>
+          <div class="stage-sublabel">App Service</div>
+          <div class="stage-status" id="status-4">IDLE</div>
+          <div class="stage-progress"><div class="progress-fill" id="prog-4"></div></div>
+        </div>
+
+        <div class="pipe-connector" id="conn-4"><div class="conn-line"><div class="conn-flow"></div></div></div>
+
+        <!-- Stage 6: Monitor -->
+        <div class="pipe-stage" id="stage-monitor" data-stage="5" onclick="selectStage(5)">
+          <div class="stage-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+            </svg>
+          </div>
+          <div class="stage-label">Monitor</div>
+          <div class="stage-sublabel">App Insights</div>
+          <div class="stage-status" id="status-5">IDLE</div>
+          <div class="stage-progress"><div class="progress-fill" id="prog-5"></div></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Stage Detail Panel -->
+    <div class="stage-detail" id="stage-detail">
+      <div class="detail-header">
+        <span class="detail-tag" id="detail-tag">SELECT A STAGE</span>
+        <span class="detail-status-badge" id="detail-badge">—</span>
+      </div>
+      <div class="detail-body">
+        <div class="detail-log" id="detail-log">
+          <div class="log-line dim">// Click any pipeline stage above to see details</div>
+        </div>
+        <div class="detail-meta" id="detail-meta">
+          <div class="meta-item"><span>Duration</span><span id="meta-dur">—</span></div>
+          <div class="meta-item"><span>Agent</span><span id="meta-agent">—</span></div>
+          <div class="meta-item"><span>Trigger</span><span id="meta-trigger">—</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- YAML Preview -->
+    <div class="yaml-block">
+      <div class="yaml-header">
+        <span class="yaml-tag">azure-pipelines.yml</span>
+        <button class="copy-btn" onclick="copyYaml()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+          Copy
+        </button>
+      </div>
+      <pre class="yaml-code" id="yaml-code"><code><span class="y-key">trigger</span>:
+  <span class="y-key">branches</span>:
+    <span class="y-key">include</span>:
+      - <span class="y-str">main</span>
+      - <span class="y-str">release/*</span>
+
+<span class="y-key">pool</span>:
+  <span class="y-key">vmImage</span>: <span class="y-str">'ubuntu-latest'</span>
+
+<span class="y-key">variables</span>:
+  <span class="y-key">acrName</span>: <span class="y-str">'myazureregistry.azurecr.io'</span>
+  <span class="y-key">imageName</span>: <span class="y-str">'my-webapp'</span>
+  <span class="y-key">tag</span>: <span class="y-str">'$(Build.BuildId)'</span>
+
+<span class="y-key">stages</span>:
+  - <span class="y-key">stage</span>: <span class="y-val">Build</span>
+    <span class="y-key">displayName</span>: <span class="y-str">'Build &amp; Test'</span>
+    <span class="y-key">jobs</span>:
+      - <span class="y-key">job</span>: <span class="y-val">BuildJob</span>
+        <span class="y-key">steps</span>:
+          - <span class="y-key">task</span>: <span class="y-val">NodeTool@0</span>
+            <span class="y-key">inputs</span>:
+              <span class="y-key">versionSpec</span>: <span class="y-str">'18.x'</span>
+          - <span class="y-key">script</span>: <span class="y-str">npm install &amp;&amp; npm test</span>
+            <span class="y-key">displayName</span>: <span class="y-str">'Install &amp; Test'</span>
+
+  - <span class="y-key">stage</span>: <span class="y-val">Containerize</span>
+    <span class="y-key">dependsOn</span>: <span class="y-val">Build</span>
+    <span class="y-key">jobs</span>:
+      - <span class="y-key">job</span>: <span class="y-val">DockerJob</span>
+        <span class="y-key">steps</span>:
+          - <span class="y-key">task</span>: <span class="y-val">Docker@2</span>
+            <span class="y-key">inputs</span>:
+              <span class="y-key">command</span>: <span class="y-str">'buildAndPush'</span>
+              <span class="y-key">containerRegistry</span>: <span class="y-str">'$(acrServiceConnection)'</span>
+              <span class="y-key">repository</span>: <span class="y-str">'$(imageName)'</span>
+              <span class="y-key">tags</span>: <span class="y-str">'$(tag)'</span>
+
+  - <span class="y-key">stage</span>: <span class="y-val">Deploy</span>
+    <span class="y-key">dependsOn</span>: <span class="y-val">Containerize</span>
+    <span class="y-key">jobs</span>:
+      - <span class="y-key">deployment</span>: <span class="y-val">DeployToAppService</span>
+        <span class="y-key">environment</span>: <span class="y-str">'production'</span>
+        <span class="y-key">strategy</span>:
+          <span class="y-key">runOnce</span>:
+            <span class="y-key">deploy</span>:
+              <span class="y-key">steps</span>:
+                - <span class="y-key">task</span>: <span class="y-val">AzureWebAppContainer@1</span>
+                  <span class="y-key">inputs</span>:
+                    <span class="y-key">azureSubscription</span>: <span class="y-str">'$(azureServiceConnection)'</span>
+                    <span class="y-key">appName</span>: <span class="y-str">'my-webapp'</span>
+                    <span class="y-key">containers</span>: <span class="y-str">'$(acrName)/$(imageName):$(tag)'</span>
+</code></pre>
+    </div>
+  </section>
+
+  <!-- AZURE CONTAINER REGISTRY -->
+  <section class="section alt-section" id="registry">
+    <div class="section-header">
+      <div class="section-tag">AZURE CONTAINER REGISTRY</div>
+      <h2>Container Image Management</h2>
+      <p>Private Docker registry fully integrated with Azure services</p>
+    </div>
+
+    <div class="acr-dashboard">
+      <div class="acr-sidebar">
+        <div class="acr-logo-box">
+          <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+            <rect width="48" height="48" rx="12" fill="#0078D4" fill-opacity="0.15"/>
+            <path d="M10 20h8v8h-8zM20 20h8v8h-8zM30 20h8v8h-8zM20 10h8v8h-8z" stroke="#0078D4" stroke-width="1.5" fill="none"/>
+            <path d="M36 20c4 0 6 2 6 4s-2 4-2 4H10a4 4 0 010-8h4" stroke="#0078D4" stroke-width="1.5"/>
+          </svg>
+          <span>ACR</span>
+        </div>
+        <div class="acr-info-list">
+          <div class="acr-info-item"><span class="info-label">Registry URL</span><span class="info-val">myapp.azurecr.io</span></div>
+          <div class="acr-info-item"><span class="info-label">SKU</span><span class="info-val">Standard</span></div>
+          <div class="acr-info-item"><span class="info-label">Location</span><span class="info-val">East US</span></div>
+          <div class="acr-info-item"><span class="info-label">Images</span><span class="info-val highlight">12</span></div>
+          <div class="acr-info-item"><span class="info-label">Storage Used</span><span class="info-val">4.2 GB</span></div>
+        </div>
+      </div>
+
+      <div class="acr-images">
+        <div class="acr-table-head">
+          <span>IMAGE</span><span>TAG</span><span>SIZE</span><span>PUSHED</span><span>STATUS</span>
+        </div>
+        <div class="acr-row active">
+          <span class="img-name">my-webapp</span><span class="img-tag">latest • #342</span><span>128 MB</span><span>2 min ago</span><span class="badge success">✓ Active</span>
+        </div>
+        <div class="acr-row">
+          <span class="img-name">my-webapp</span><span class="img-tag">#341</span><span>127 MB</span><span>1 hr ago</span><span class="badge neutral">Stored</span>
+        </div>
+        <div class="acr-row">
+          <span class="img-name">my-webapp</span><span class="img-tag">#340</span><span>126 MB</span><span>3 hr ago</span><span class="badge neutral">Stored</span>
+        </div>
+        <div class="acr-row">
+          <span class="img-name">api-service</span><span class="img-tag">v2.1.0</span><span>94 MB</span><span>1 day ago</span><span class="badge neutral">Stored</span>
+        </div>
+        <div class="acr-row">
+          <span class="img-name">nginx-proxy</span><span class="img-tag">stable</span><span>23 MB</span><span>3 days ago</span><span class="badge neutral">Stored</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="cmd-grid">
+      <div class="cmd-card">
+        <div class="cmd-title">Login to ACR</div>
+        <pre><code><span class="c-comment"># Login via Azure CLI</span>
+az acr login --name <span class="c-str">myregistry</span></code></pre>
+      </div>
+      <div class="cmd-card">
+        <div class="cmd-title">Build & Push Image</div>
+        <pre><code>docker build -t <span class="c-str">myapp:latest</span> .
+docker tag myapp:latest \
+  myregistry.azurecr.io/<span class="c-str">myapp:latest</span>
+docker push myregistry.azurecr.io/<span class="c-str">myapp:latest</span></code></pre>
+      </div>
+      <div class="cmd-card">
+        <div class="cmd-title">List Images</div>
+        <pre><code>az acr repository list \
+  --name <span class="c-str">myregistry</span> --output table</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- AZURE APP SERVICE -->
+  <section class="section" id="deploy">
+    <div class="section-header">
+      <div class="section-tag">AZURE APP SERVICE</div>
+      <h2>Automated Web App Deployment</h2>
+      <p>Zero-downtime deployments with slot swapping &amp; auto-scaling</p>
+    </div>
+
+    <div class="deploy-grid">
+      <div class="deploy-card">
+        <div class="deploy-card-icon blue">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        </div>
+        <h3>Deployment Slots</h3>
+        <p>Use staging and production slots. Test in staging, then do a zero-downtime swap to production.</p>
+        <div class="slot-visual">
+          <div class="slot staging">
+            <span>STAGING</span>
+            <span class="slot-url">myapp-staging.azurewebsites.net</span>
+          </div>
+          <div class="swap-arrow">⇄ Swap</div>
+          <div class="slot production">
+            <span>PRODUCTION</span>
+            <span class="slot-url">myapp.azurewebsites.net</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="deploy-card">
+        <div class="deploy-card-icon teal">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/></svg>
+        </div>
+        <h3>Auto-Scaling Rules</h3>
+        <p>Scale out automatically based on CPU usage, request count, or custom metrics from App Insights.</p>
+        <div class="scale-bars">
+          <div class="scale-bar-row"><span>CPU 30%</span><div class="bar"><div class="bar-fill" style="width:30%"></div></div></div>
+          <div class="scale-bar-row"><span>CPU 65%</span><div class="bar"><div class="bar-fill warn" style="width:65%"></div></div></div>
+          <div class="scale-bar-row"><span>CPU 85% → Scale</span><div class="bar"><div class="bar-fill danger" style="width:85%"></div></div></div>
+        </div>
+      </div>
+
+      <div class="deploy-card">
+        <div class="deploy-card-icon orange">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <h3>Health Checks</h3>
+        <p>Configure health probe endpoints. App Service automatically restarts unhealthy instances.</p>
+        <div class="health-checks">
+          <div class="health-row ok"><span class="hc-dot"></span><span>/health</span><span>200 OK</span></div>
+          <div class="health-row ok"><span class="hc-dot"></span><span>/api/ping</span><span>200 OK</span></div>
+          <div class="health-row ok"><span class="hc-dot"></span><span>/ready</span><span>200 OK</span></div>
+        </div>
+      </div>
+
+      <div class="deploy-card">
+        <div class="deploy-card-icon purple">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+        </div>
+        <h3>Environment Variables</h3>
+        <p>Securely inject config from Azure Key Vault or App Service Application Settings.</p>
+        <div class="env-list">
+          <div class="env-row"><span class="env-key">NODE_ENV</span><span class="env-val">production</span></div>
+          <div class="env-row"><span class="env-key">DB_URL</span><span class="env-val">@KeyVault</span></div>
+          <div class="env-row"><span class="env-key">API_KEY</span><span class="env-val">@KeyVault</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MONITOR SECTION -->
+  <section class="section alt-section" id="monitor">
+    <div class="section-header">
+      <div class="section-tag">AZURE MONITOR &amp; APP INSIGHTS</div>
+      <h2>Real-Time Pipeline Monitoring</h2>
+      <p>Track build health, deployment status, and application performance</p>
+    </div>
+
+    <div class="monitor-grid">
+      <div class="monitor-chart-box">
+        <div class="chart-title">Build Success Rate (Last 14 Days)</div>
+        <canvas id="buildChart" width="600" height="200"></canvas>
+      </div>
+      <div class="monitor-metrics">
+        <div class="metric-card">
+          <div class="metric-icon green">✓</div>
+          <div class="metric-info">
+            <div class="metric-val">98.2%</div>
+            <div class="metric-label">Build Success</div>
+          </div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-icon blue">⚡</div>
+          <div class="metric-info">
+            <div class="metric-val">3m 42s</div>
+            <div class="metric-label">Avg Pipeline Time</div>
+          </div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-icon orange">🚀</div>
+          <div class="metric-info">
+            <div class="metric-val">340</div>
+            <div class="metric-label">Total Deployments</div>
+          </div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-icon purple">⬇</div>
+          <div class="metric-info">
+            <div class="metric-val">12ms</div>
+            <div class="metric-label">Avg Response Time</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="log-terminal" id="monitor-terminal">
+      <div class="terminal-bar">
+        <div class="t-dots"><span></span><span></span><span></span></div>
+        <span class="t-title">Azure Pipeline Monitor — Live Log</span>
+        <button class="t-clear" onclick="clearLog()">Clear</button>
+      </div>
+      <div class="terminal-body" id="terminal-log">
+        <div class="t-line"><span class="t-time">[00:00:00]</span> <span class="t-info">Azure DevOps Pipeline Monitor initialized</span></div>
+        <div class="t-line"><span class="t-time">[00:00:01]</span> <span class="t-ok">Connected to pipeline: my-webapp-ci-cd</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- KEY DEVOPS CONCEPTS -->
+  <section class="section" id="concepts">
+    <div class="section-header">
+      <div class="section-tag">DEVOPS CONCEPTS</div>
+      <h2>Core Azure DevOps Concepts</h2>
+      <p>Master the fundamentals that power every automated pipeline</p>
+    </div>
+
+    <div class="concepts-grid">
+      <div class="concept-card" onclick="expandConcept(this)">
+        <div class="concept-num">01</div>
+        <div class="concept-icon">🔄</div>
+        <h3>Continuous Integration</h3>
+        <p>Automatically build and test code on every commit, catching bugs early before they reach production.</p>
+        <div class="concept-extra">
+          <ul>
+            <li>Trigger on branch push or PR creation</li>
+            <li>Run unit, integration &amp; E2E tests</li>
+            <li>Static code analysis (SonarQube)</li>
+            <li>Publish test result artifacts</li>
+          </ul>
+        </div>
+        <div class="concept-toggle">+ Learn More</div>
+      </div>
+
+      <div class="concept-card" onclick="expandConcept(this)">
+        <div class="concept-num">02</div>
+        <div class="concept-icon">🚀</div>
+        <h3>Continuous Delivery</h3>
+        <p>Every passing build produces a deployable artifact that can be released to any environment with one click.</p>
+        <div class="concept-extra">
+          <ul>
+            <li>Environment gates and approvals</li>
+            <li>Versioned release pipelines</li>
+            <li>Rollback on failure</li>
+            <li>Blue-green deployments</li>
+          </ul>
+        </div>
+        <div class="concept-toggle">+ Learn More</div>
+      </div>
+
+      <div class="concept-card" onclick="expandConcept(this)">
+        <div class="concept-num">03</div>
+        <div class="concept-icon">📦</div>
+        <h3>Infrastructure as Code</h3>
+        <p>Provision and manage Azure resources declaratively using ARM templates, Bicep, or Terraform.</p>
+        <div class="concept-extra">
+          <ul>
+            <li>Bicep for native Azure IaC</li>
+            <li>Terraform for multi-cloud</li>
+            <li>ARM templates &amp; JSON schemas</li>
+            <li>GitOps workflows</li>
+          </ul>
+        </div>
+        <div class="concept-toggle">+ Learn More</div>
+      </div>
+
+      <div class="concept-card" onclick="expandConcept(this)">
+        <div class="concept-num">04</div>
+        <div class="concept-icon">🐳</div>
+        <h3>Containerization</h3>
+        <p>Package apps and dependencies into Docker containers for consistent, portable deployments across environments.</p>
+        <div class="concept-extra">
+          <ul>
+            <li>Dockerfile best practices</li>
+            <li>Multi-stage builds</li>
+            <li>Image scanning with Defender</li>
+            <li>AKS for orchestration</li>
+          </ul>
+        </div>
+        <div class="concept-toggle">+ Learn More</div>
+      </div>
+
+      <div class="concept-card" onclick="expandConcept(this)">
+        <div class="concept-num">05</div>
+        <div class="concept-icon">🛡️</div>
+        <h3>Shift-Left Security</h3>
+        <p>Integrate security scanning directly into the pipeline — catching vulnerabilities before deployment.</p>
+        <div class="concept-extra">
+          <ul>
+            <li>SAST &amp; DAST scanning</li>
+            <li>Dependency vulnerability checks</li>
+            <li>Secrets detection</li>
+            <li>Azure Policy as code</li>
+          </ul>
+        </div>
+        <div class="concept-toggle">+ Learn More</div>
+      </div>
+
+      <div class="concept-card" onclick="expandConcept(this)">
+        <div class="concept-num">06</div>
+        <div class="concept-icon">📊</div>
+        <h3>Observability</h3>
+        <p>Instrument apps with distributed tracing, metrics, and logs for end-to-end system visibility.</p>
+        <div class="concept-extra">
+          <ul>
+            <li>Application Insights SDK</li>
+            <li>Azure Monitor dashboards</li>
+            <li>Log Analytics Workspace</li>
+            <li>Smart alert rules</li>
+          </ul>
+        </div>
+        <div class="concept-toggle">+ Learn More</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-logo">Azure<span>DevOps</span></div>
+      <div class="footer-links">
+        <a href="https://docs.microsoft.com/azure/devops" target="_blank">Azure DevOps Docs</a>
+        <a href="https://docs.microsoft.com/azure/container-registry" target="_blank">ACR Docs</a>
+        <a href="https://docs.microsoft.com/azure/app-service" target="_blank">App Service Docs</a>
+      </div>
+      <div class="footer-note">Built for learning Azure DevOps. Not affiliated with Microsoft.</div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
